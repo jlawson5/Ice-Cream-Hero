@@ -12,7 +12,7 @@ function preload() {
 
     game.load.image('bg', 'assets/bg.png');//background//
     game.load.image('hero', 'assets/Hero.png');//our hero, determined to get the ice cream//
-    game.load.image('icecream', 'assets/IceCream.png');//Ice Cream: Collect these to increase your time by 3 and your score by 1000//
+    game.load.image('icecream', 'assets/IceCream.png');//Ice Cream: Collect these to increase your time by 3 and your score by 2000//
     game.load.image('spinach', 'assets/GrossSpinach.png');//Cans of Spinach: The disgusting greens your parents keep saying is good for you. Tastes disgusting and reduces time by 10; but it's good for you so it gives you 10000 points//
 }
 
@@ -32,6 +32,7 @@ var icecream;//ice cream group//
 var spinach;//gross spinach group//
 var itemTimer = 1000;//timer on which spinach and icecream spawn//
 var stateText;
+var resetChar = false;//used to reset the character's coordinates upon restarting (startGame() doesn't seem to want to do it)//
 
 function create() {
 
@@ -63,6 +64,13 @@ function create() {
 }
 
 function update() {
+    
+    if(resetChar)
+    {
+        player.body.x = 250;
+        player.body.y = 400;
+        resetChar = false;
+    }
     if(isRunning)
     {
         score++;
@@ -70,22 +78,22 @@ function update() {
         bg2.body.velocity.y = 300;
         if (cursors.left.isDown)
         {
-            player.body.velocity.x = -200;
+            player.body.velocity.x = -250;
             player.body.velocity.y = 0;
         }
         else if (cursors.right.isDown)
         {
-            player.body.velocity.x = 200;
+            player.body.velocity.x = 250;
             player.body.velocity.y = 0;
         }
         else if (cursors.up.isDown)
         {
-            player.body.velocity.y = -200;
+            player.body.velocity.y = -250;
             player.body.velocity.x = 0;
         }
         else if (cursors.down.isDown)
         {
-            player.body.velocity.y = 200;
+            player.body.velocity.y = 250;
             player.body.velocity.x = 0;
         }
         else
@@ -168,11 +176,10 @@ function spawnItem()
         
 function startGame()
 {
+    resetChar = true;
     isRunning = true;
     timeLeft = 60;
     score = 0;
-    player.body.x = 250;
-    player.body.y = 400;
     timeTimer = game.time.now + 1000;
     itemTimer = game.time.now + 1000;
     stateText.text = "   Gameover! \nClick to play again!"
@@ -182,7 +189,7 @@ function startGame()
 function iceCreamCollision(player, icecream)
 {
     icecream.kill();
-    score += 1000;
+    score += 2000;
     timeLeft += 3;
 }
         
