@@ -14,6 +14,9 @@ function preload() {
     game.load.image('hero', 'assets/Hero.png');//our hero, determined to get the ice cream//
     game.load.image('icecream', 'assets/IceCream.png');//Ice Cream: Collect these to increase your time by 3 and your score by 2000//
     game.load.image('spinach', 'assets/GrossSpinach.png');//Cans of Spinach: The disgusting greens your parents keep saying is good for you. Tastes disgusting and reduces time by 10; but it's good for you so it gives you 10000 points//
+    game.load.audio('music', 'assets/IceCreamTruck.mp3');
+    game.load.audio('item', 'assets/Electronic_Chime-KevanGC-495939803.mp3');
+    game.load.audio('lose', 'assets/Sad_Trombone-Joe_Lamb-665429450.mp3');
 }
 
 var isRunning = false;//if the game is running//
@@ -33,6 +36,9 @@ var spinach;//gross spinach group//
 var itemTimer = 1000;//timer on which spinach and icecream spawn//
 var stateText;
 var resetChar = false;//used to reset the character's coordinates upon restarting (startGame() doesn't seem to want to do it)//
+var music;
+var itemSFX;
+var loseSFX;
 
 function create() {
 
@@ -59,6 +65,13 @@ function create() {
     scoreText = game.add.text(10, 10, scoreString + score, {font: '34px Arial', fill: '#fff'});
     timeText = game.add.text(10, 50, timeString + timeLeft, {font: '34px Arial', fill: '#fff'});
     stateText = game.add.text(130, 300, "Click to play!", {font: '34px Arial', fill: '#000'});
+    
+    music = game.add.audio('music');
+    music.addMarker('music', 0, 19, 1, true);
+    music.play('music', 0, 1, true);
+    
+    itemSFX = game.add.audio('item');
+    loseSFX = game.add.audio('lose');
 
     cursors = game.input.keyboard.createCursorKeys();
 }
@@ -134,6 +147,8 @@ function update() {
     
     if(timeLeft <= 0)
     {
+        if(isRunning)
+            loseSFX.play();
         isRunning = false;
         icecream.removeAll(true);
         spinach.removeAll(true);
@@ -188,6 +203,7 @@ function startGame()
         
 function iceCreamCollision(player, icecream)
 {
+    itemSFX.play();
     icecream.kill();
     score += 2000;
     timeLeft += 3;
@@ -195,6 +211,7 @@ function iceCreamCollision(player, icecream)
         
 function spinachCollision(player, spinach)
 {
+    itemSFX.play();
     spinach.kill();
     score += 10000;//a lot of points for a lot of gross. Is it worth it?//
     timeLeft -= 10;
